@@ -82,6 +82,25 @@
       font-size: 0.875rem;
     }
 
+    .user-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--primary-light);
+    }
+
     .hero {
       text-align: center;
       margin-bottom: 3rem;
@@ -98,6 +117,16 @@
       max-width: 600px;
       margin: 0 auto;
       font-size: 1.125rem;
+    }
+
+    .welcome-message {
+      background-color: var(--primary-light);
+      color: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      font-weight: 500;
     }
 
     .card {
@@ -329,7 +358,7 @@
       width: 100%;
       height: 100%;
       background-color: rgba(0, 0, 0, 0.8);
-      display: flex;
+      display: none; /* Hidden by default */
       justify-content: center;
       align-items: center;
       z-index: 2000;
@@ -479,21 +508,87 @@
         padding: 1.5rem;
       }
     }
-  </style>
-</head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id={{ GA_ID }}"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag() { dataLayer.push(arguments); }
-  gtag('js', new Date());
 
-  gtag('config', '{{ GA_ID }}');
-</script>
+    /* Notification banner styles */
+    .notification-banner {
+      margin-bottom: 1.5rem;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .error-banner {
+      background-color: #fee2e2;
+      border-left: 4px solid #ef4444;
+    }
+    
+    .notification-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .notification-content i {
+      font-size: 1.5rem;
+      color: #ef4444;
+    }
+    
+    .notification-content h4 {
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+      color: #b91c1c;
+    }
+    
+    .notification-content p {
+      color: #7f1d1d;
+      margin: 0;
+    }
+    
+    .banner-link {
+      color: #4f46e5;
+      text-decoration: underline;
+      font-weight: 500;
+    }
+    
+    .close-banner {
+      background: transparent;
+      border: none;
+      color: #7f1d1d;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+  </style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ GA_ID }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', '{{ GA_ID }}', { 'debug_mode': true });
+  </script>
+</head>
 
 <body>
+  <!-- Error notification banner -->
+  {% if 'oauth_error' in session %}
+  <div class="notification-banner error-banner">
+    <div class="notification-content">
+      <i class="fas fa-exclamation-circle"></i>
+      <div>
+        <h4>Google Login Issue Detected</h4>
+        <p>{{ session.get('oauth_error', 'There was an issue with Google login.') }} Please try the alternative login method through the login page.</p>
+      </div>
+    </div>
+    <button class="close-banner" onclick="this.parentElement.style.display='none'"><i class="fas fa-times"></i></button>
+  </div>
+  {% endif %}
+
   <!-- Consent Modal -->
-  {% if stopAnonymousService == false %}
+  {% if user.is_authenticated %}
   <div class="consent-modal" id="consent-modal">
     <div class="consent-container">
       <div class="consent-header">
@@ -532,26 +627,28 @@
   <div class="container">
     <div class="header">
       <div class="logo">
-        <i class="fas fa-eraser"></i>
+        <i class="fas fa-stamp"></i>
         <span>Remove Watermark From Image</span>
+      </div>
+      <div class="user-info">
+        {% if user.is_authenticated %}
+        <div class="user-profile">
+          <img src="{{ user.profile_pic }}" alt="{{ user.name }}" class="user-avatar">
+          <span>{{ user.name }}</span>
+          <a href="/logout" class="auth-button">
+            <i class="fas fa-sign-out-alt"></i>
+            Logout
+          </a>
+        </div>
+        {% endif %}
       </div>
     </div>
 
     <div class="hero">
-      <h1>AI Powered Watermark Remover</h1>
-      {% if stopAnonymousService == false %}
-      <p>Our AI-powered tool helps you remove watermarks from your images in seconds, restoring them to their original
-        beauty.</p>
-      {% endif %}
+      <h1>Remove Watermarks from Images with AI</h1>
+      <p>Our AI-powered tool intelligently detects and removes watermarks from your images while preserving image quality.</p>
     </div>
-
-    <div class="card uploader" id="auth-enforcement-card">
-      <h3>🔒 Authentication Required</h3>
-      <p>We are implementing authentication to ensure responsible usage of this web application.</p>
-      <p>Access will soon require login credentials.</p>
-      <p>The transition will happen in <b><span style="color: #6366f1;" id="countdown">10</span> seconds...</b></p>
-    </div>
-
+    
     <!-- Disclaimer section -->
     <div class="disclaimer">
       <h3><i class="fas fa-exclamation-triangle"></i> Disclaimer</h3>
@@ -562,32 +659,15 @@
         how you use it.</p>
     </div>
 
-    {% if stopAnonymousService %}
-    <div class="card github-card">
-      <div class="github-content">
-        <i class="fab fa-github github-icon"></i>
-        <div class="github-text">
-          <h3>Open Source Project</h3>
-          <p>This tool is an open source project. You can check out the code, contribute, or star the repository on
-            GitHub.</p>
-        </div>
-      </div>
-      <a href="https://github.com/Sumit189/removewatermarkfromimage?tab=readme-ov-file#yes-this-was-always-a-prompt-%EF%B8%8F"
-        target="_blank" rel="noopener noreferrer" class="github-button">
-        <i class="fab fa-github"></i>
-        View on GitHub
-      </a>
-    </div>
-    {% else %}
     <div class="card">
-      <form method="post" action="/process" enctype="multipart/form-data" id="upload-form">
-        <label for="file-input" class="uploader" id="drop-area">
+      <form action="/process" method="post" enctype="multipart/form-data" id="upload-form">
+        <div class="uploader" id="drop-area">
           <i class="fas fa-cloud-upload-alt"></i>
-          <h3>Upload an image</h3>
-          <p>Click or drag & drop your image here</p>
-          <span class="button" style="width: auto;">Select Image</span>
-        </label>
-        <input type="file" name="image" id="file-input" accept="image/*" required>
+          <h3>Upload Image</h3>
+          <p>Drag & drop your image here or click to browse</p>
+          <input type="file" id="file-input" name="image" accept="image/*" required>
+          <button type="button" class="button" id="browse-button">Browse Files</button>
+        </div>
 
         <div class="file-preview" id="preview-container">
           <h3>Selected Image</h3>
@@ -620,6 +700,7 @@
       </div>
     </div>
 
+    <!-- GitHub card shown at the bottom for all users -->
     <div class="card github-card">
       <div class="github-content">
         <i class="fab fa-github github-icon"></i>
@@ -635,110 +716,15 @@
         View on GitHub
       </a>
     </div>
-    {% endif %}
   </div>
 
   <script>
-
-    function updateCountdown() {
-      const endDate = new Date("{{ anonymousUseEndDate }}").getTime();
-      const now = new Date();
-      const timeDiff = endDate - now;
-
-      if (timeDiff <= 0) {
-        document.getElementById("auth-enforcement-card").innerHTML =
-          "<h2>🔒 Authentication Now Required</h2><p>Access to this web app is now restricted.</p>";
-        clearInterval(timer);
-        if (!stopAnonymousService) {
-          window.location.reload();
-        }
-      }
-
-      // Convert milliseconds into days, hours, minutes, seconds
-      const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-
-      document.getElementById("countdown").textContent =
-        `${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
-
-    // Update every second
-    const timer = setInterval(updateCountdown, 1000);
-    updateCountdown();
-    // Consent modal functionality
-    const consentModal = document.getElementById('consent-modal');
-    const consentCheckbox = document.getElementById('consent-checkbox');
-    const consentButton = document.getElementById('consent-button');
-    const submitButton = document.getElementById('submit-button');
-    const uploadForm = document.getElementById('upload-form');
-
-    // Hide consent modal initially
-    consentModal.style.display = 'none';
-
-    // Generate a unique session ID for consent tracking
-    const sessionId = generateSessionId();
-
-    // Function to generate a unique session ID
-    function generateSessionId() {
-      return 'consent_' + Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15) +
-        '_' + new Date().getTime();
-    }
-
-    // Log consent with Google Analytics
-    function logConsent() {
-      if (typeof gtag === 'function') {
-        gtag('event', 'consent_given', {
-          'event_category': 'Legal',
-          'event_label': 'Watermark Removal Consent',
-          'session_id': sessionId,
-          'timestamp': new Date().toISOString()
-        });
-        console.log('Consent logged with session ID:', sessionId);
-      }
-    }
-
-    // Enable button when checkbox is checked
-    consentCheckbox.addEventListener('change', function () {
-      consentButton.disabled = !this.checked;
-    });
-
-    // Handle consent button click
-    consentButton.addEventListener('click', function () {
-      consentModal.style.display = 'none';
-
-      // Log the consent with Google Analytics
-      logConsent();
-
-      // Submit the form after consent is given
-      if (uploadForm) {
-        uploadForm.submit();
-      }
-    });
-
-    // Show consent modal when submit button is clicked
-    if (uploadForm) {
-      uploadForm.addEventListener('submit', function (e) {
-        // Prevent the form from submitting
-        e.preventDefault();
-
-        // Show consent modal
-        consentModal.style.display = 'flex';
-
-        // Reset checkbox state
-        consentCheckbox.checked = false;
-        consentButton.disabled = true;
-      });
-    }
-
     const fileInput = document.getElementById('file-input');
     const previewContainer = document.getElementById('preview-container');
     const imagePreview = document.getElementById('image-preview');
     const dropArea = document.getElementById('drop-area');
     const loadingOverlay = document.getElementById('loading-overlay');
-
+    
     // Store original image dimensions for consistent output size
     let originalImageWidth = 0;
     let originalImageHeight = 0;
@@ -787,6 +773,56 @@
       }
     }
 
+    // Add click handler for browse button
+    const browseButton = document.getElementById('browse-button');
+    if (browseButton && fileInput) {
+      browseButton.addEventListener('click', function() {
+        fileInput.click();
+      });
+    }
+    
+    // Consent modal functionality
+    const consentModal = document.getElementById('consent-modal');
+    const consentCheckbox = document.getElementById('consent-checkbox');
+    const consentButton = document.getElementById('consent-button');
+    const submitButton = document.getElementById('submit-button');
+    const uploadForm = document.getElementById('upload-form');
+
+    // Explicitly hide consent modal initially
+    if (consentModal) {
+      consentModal.style.display = 'none';
+    }
+
+    // Generate a unique session ID for consent tracking
+    const sessionId = generateSessionId();
+
+    // Function to generate a unique session ID
+    function generateSessionId() {
+      return 'consent_' + Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15) +
+        '_' + new Date().getTime();
+    }
+
+    // Log consent with Google Analytics
+    function logConsent() {
+      const hashedEmail = btoa('{{ user.email }}');
+      if (typeof gtag === 'function') {
+        gtag('event', 'consent_given', {
+          'event_category': 'Legal',
+          'event_label': 'Watermark Removal Consent',
+          'session_id': sessionId,
+          'timestamp': new Date().toISOString(),
+          'user': hashedEmail
+        });
+        console.log('Consent logged with session ID:', sessionId);
+      }
+    }
+
+    // Enable button when checkbox is checked
+    consentCheckbox.addEventListener('change', function () {
+      consentButton.disabled = !this.checked;
+    });
+
     // Update the consent button click handler to also show loading overlay
     consentButton.addEventListener('click', function () {
       consentModal.style.display = 'none';
@@ -800,6 +836,37 @@
         uploadForm.submit();
       }
     });
+
+    // Show consent modal when submit button is clicked
+    if (uploadForm) {
+      uploadForm.addEventListener('submit', function (e) {
+        // Prevent the form from submitting
+        e.preventDefault();
+
+        // Only proceed if the file input has a file
+        if (fileInput && fileInput.files && fileInput.files.length > 0) {
+          // Show consent modal
+          if (consentModal) {
+            consentModal.style.display = 'flex';
+            
+            // Reset checkbox state
+            if (consentCheckbox) {
+              consentCheckbox.checked = false;
+            }
+            
+            if (consentButton) {
+              consentButton.disabled = true;
+            }
+          } else {
+            // If modal doesn't exist, just submit the form
+            uploadForm.submit();
+          }
+        } else {
+          // No file selected
+          alert('Please select a file first');
+        }
+      });
+    }
 
     if (fileInput) {
       fileInput.addEventListener('change', function () {

@@ -145,6 +145,30 @@
         <i class="fas fa-home"></i>
         Return to Home
       </a>
+      
+      {% if not current_user.is_authenticated %}
+        <div style="margin-top: 1.5rem;">
+          <p style="margin-bottom: 1rem; color: var(--text-light);">You need to be signed in to use this tool.</p>
+          <a href="/login" class="button" style="background-color: #4285F4;">
+            <i class="fab fa-google"></i>
+            Sign in with Google
+          </a>
+        </div>
+      
+        {% if 'redirect_uri_mismatch' in error or 'OAuth' in error %}
+        <div style="margin-top: 1.5rem; padding: 1rem; background-color: #f0f4ff; border-radius: 0.5rem; text-align: left;">
+          <h3 style="margin-bottom: 0.5rem;">OAuth Configuration Issue</h3>
+          <p style="margin-bottom: 0.5rem;">It looks like there's an issue with the OAuth configuration. This may be due to:</p>
+          <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+            <li>Mismatched redirect URI in Google Cloud Console</li>
+            <li>Invalid client credentials</li>
+            <li>Issues with the token verification process</li>
+          </ul>
+          <p style="margin-bottom: 0.5rem;">You can try using the alternative login method from the login page or check these configuration settings:</p>
+          <a href="/oauth-config-help" style="color: #4285F4; text-decoration: underline;">Click here for step-by-step configuration help</a>
+        </div>
+        {% endif %}
+      {% endif %}
     </div>
   </div>
 </body>

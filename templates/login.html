@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Remove Watermark From Image</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --primary-dark: #4f46e5;
+      --bg-light: #f9fafb;
+      --bg-white: #ffffff;
+      --text-dark: #1f2937;
+      --text-light: #6b7280;
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 500px;
+      width: 100%;
+      padding: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+    }
+
+    .logo i {
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+
+    .card {
+      background-color: var(--bg-white);
+      border-radius: 1rem;
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .card h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-dark);
+    }
+
+    .card p {
+      color: var(--text-light);
+      margin-bottom: 2rem;
+    }
+
+    .google-btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1rem;
+    }
+
+    .google-btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .google-btn i {
+      font-size: 1.125rem;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: var(--text-light);
+      font-size: 0.875rem;
+    }
+
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+  <!-- Google One Tap Script removed -->
+</head>
+
+<body>
+  <div class="container">
+    <div class="logo">
+      <i class="fas fa-stamp"></i>
+      <span>Remove Watermark From Image</span>
+    </div>
+    
+    <div class="card">
+      <h1>Sign in to continue</h1>
+      <p>Please sign in with your Google account to access the watermark removal tool.</p>
+      
+      <!-- Google One Tap sign-in button removed -->
+      
+      <a href="/login?auth=google" class="google-btn">
+        <i class="fab fa-google"></i>
+        Sign in with Google
+      </a>
+
+      <p style="margin-top: 1rem; font-size: 0.8rem;">
+        <a href="/direct-google-login" style="color: #4b5563;">
+          Having trouble? Try alternative login method
+        </a>
+      </p>
+    </div>
+  </div>
+  
+  <!-- Google Analytics (if enabled) -->
+  {% if GA_ID %}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ GA_ID }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', '{{ GA_ID }}');
+  </script>
+  {% endif %}
+</body>
+
+</html> 

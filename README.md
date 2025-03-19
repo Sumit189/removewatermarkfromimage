@@ -3,7 +3,7 @@
   <img src="/assets/gemini_intro.jpg" alt="Gemini" width="600"/>
 </p>
 
-An AI-powered watermark removal tool that uses Google's Gemini to magically erase watermarks from images. It’s amazing how AI is changing the way we create and code. Tools like Gemini make it possible to build things faster, solve real problems, and explore new ideas with ease. This tool is just one small example of what’s possible!
+An AI-powered watermark removal tool that uses Google's Gemini to magically erase watermarks from images. It's amazing how AI is changing the way we create and code. Tools like Gemini make it possible to build things faster, solve real problems, and explore new ideas with ease. This tool is just one small example of what's possible!
 
 However, this is not about promoting piracy. The use of this tool should be done responsibly, respecting copyright laws and only for ethical purposes, such as removing watermarks from your own images or those you have permission to edit. 🚀
 
@@ -45,6 +45,29 @@ However, this is not about promoting piracy. The use of this tool should be done
    ```
    GEMINI_API_KEY=your_gemini_api_key_here
    ```
+
+### Setting up Google OAuth
+
+This application uses Google OAuth for user authentication. Follow these steps to set it up:
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Navigate to "APIs & Services" > "Credentials"
+4. Click "Create Credentials" and select "OAuth client ID"
+5. Select "Web application" as the application type
+6. Give your OAuth client a name
+7. Add authorized redirect URIs:
+   - For local development: `http://localhost:5000/callback`
+   - For production: `https://yourdomain.com/callback`
+8. Click "Create"
+9. Copy your Client ID and Client Secret
+10. Add them to your `.env` file:
+    ```
+    GEMINI_API_KEY=your_gemini_api_key_here
+    GOOGLE_CLIENT_ID=your_google_client_id_here
+    GOOGLE_CLIENT_SECRET=your_google_client_secret_here
+    SECRET_KEY=a_random_secret_key_for_flask
+    ```
 
 ### Running Locally
 
