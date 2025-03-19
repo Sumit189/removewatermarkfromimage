@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Watermark From Image - Result</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --success-dark: #059669;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .logo i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--bg-white);
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 2rem;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .result-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-header p {
+            color: var(--text-light);
+        }
+
+        /* Updated Image Comparison Slider */
+        .comparison-slider {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .image-comparison__base {
+            position: relative;
+            padding-top: 66.666%;
+            /* 3:2 aspect ratio, adjust if needed */
+        }
+
+        .image-comparison__base img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-comparison__overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .image-comparison__overlay img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-comparison__range {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: ew-resize;
+            z-index: 10;
+        }
+
+        .image-comparison__slider {
+            position: absolute;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+            z-index: 5;
+        }
+
+        .slider-labels {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 15;
+        }
+
+        .slider-label {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Rest of your original styles */
+        .image-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .image-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .image-card {
+            background-color: var(--bg-white);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .image-card-header {
+            background-color: var(--bg-light);
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .image-card-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .image-card-body {
+            padding: 1rem;
+        }
+
+        .image-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 0.5rem;
+        }
+
+        .download-section {
+            text-align: center;
+            margin-top: 3rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.75rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .button:hover {
+            background-color: var(--success-dark);
+            transform: translateY(-2px);
+        }
+
+        .button.twitter {
+            background-color: #000000;
+        }
+
+        .button.twitter:hover {
+            background-color: #333333;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-card {
+            background-color: var(--bg-white);
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .stat-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            color: var(--text-light);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ GA_ID }}"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', '{{ GA_ID }}');
+</script>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/" class="logo">
+                <i class="fas fa-eraser"></i>
+                <span>Remove Watermark From Image</span>
+            </a>
+        </div>
+
+        <a href="/" class="back-link">
+            <i class="fas fa-chevron-left"></i>
+            Back to Upload
+        </a>
+
+        <div class="card">
+            <div class="result-header">
+                <h1>Watermark Removed Successfully!</h1>
+                <p>Use the slider below to compare the original and processed images</p>
+            </div>
+
+            <div class="comparison-slider">
+                <div class="image-comparison__base">
+                    <img src="{{ generated_image }}" alt="Watermark Removed Image">
+                </div>
+                <div class="image-comparison__overlay" style="width: 50%;">
+                    <img src="{{ original_image }}" alt="Original Image">
+                </div>
+                <input type="range" min="0" max="100" value="50" class="image-comparison__range">
+                <div class="image-comparison__slider" style="left: 50%;"></div>
+                <div class="slider-labels">
+                    <div class="slider-label">Original</div>
+                    <div class="slider-label">Processed</div>
+                </div>
+            </div>
+
+            <div class="download-section">
+                <a href="{{ generated_image }}" download class="button">
+                    <i class="fas fa-download"></i>
+                    Download Processed Image
+                </a>
+                <a href="#" class="button twitter" id="shareTwitter">
+                    <i class="fab fa-x-twitter"></i>
+                    Share on X
+                </a>
+            </div>
+        </div>
+
+        <div class="image-cards">
+            <div class="image-card">
+                <div class="image-card-header">
+                    <h3>Original Image</h3>
+                </div>
+                <div class="image-card-body">
+                    <img src="{{ original_image }}" alt="Original Image">
+                </div>
+            </div>
+
+            <div class="image-card">
+                <div class="image-card-header">
+                    <h3>Watermark Removed</h3>
+                </div>
+                <div class="image-card-body">
+                    <img src="{{ generated_image }}" alt="Watermark Removed Image">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const range = document.querySelector('.image-comparison__range');
+            const overlay = document.querySelector('.image-comparison__overlay');
+            const slider = document.querySelector('.image-comparison__slider');
+
+            if (range && overlay && slider) {
+                range.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    overlay.style.width = `${value}%`;
+                    slider.style.left = `${value}%`;
+                });
+            }
+
+            const shareTwitterButton = document.getElementById('shareTwitter');
+            if (shareTwitterButton) {
+                shareTwitterButton.addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    const originalImage = "{{ original_image }}"; // Base64 image
+                    const generatedImage = "{{ generated_image }}"; // Base64 image
+
+                    const tweetText = "😃 Easily Removed Watermark from the image using: https://removewatermarkfromimage.vercel.app/\n\n@SumitPaul18_9\nHere's the result:";
+
+                    // Create a canvas and merge both images
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+
+                    const img1 = new Image();
+                    const img2 = new Image();
+
+                    img1.src = originalImage;
+                    img2.src = generatedImage;
+
+                    img1.onload = function () {
+                        img2.onload = function () {
+                            // Set canvas width and height
+                            canvas.width = img1.width + img2.width; // Side by side
+                            canvas.height = Math.max(img1.height, img2.height);
+
+                            // Draw images side by side
+                            ctx.drawImage(img1, 0, 0);
+                            ctx.drawImage(img2, img1.width, 0);
+
+                            // Convert to base64
+                            const mergedImage = canvas.toDataURL("image/png");
+
+                            // Create a download link
+                            const downloadLink = document.createElement("a");
+                            downloadLink.href = mergedImage;
+                            downloadLink.download = "tweeter_share.png";
+                            downloadLink.click();
+
+                            alert("Comparison image downloaded, Please attach it manually to your tweet. 🚀"); 
+
+                            // Open Twitter share link (user manually uploads image)
+                            const shareUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+                            window.open(shareUrl, "_blank", "width=550,height=420");
+                        };
+                    };
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

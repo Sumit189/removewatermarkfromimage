@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remove Watermark From Image</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --primary-dark: #4f46e5;
+      --bg-light: #f9fafb;
+      --bg-white: #ffffff;
+      --text-dark: #1f2937;
+      --text-light: #6b7280;
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .logo i {
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+
+    .auth-button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .auth-button:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .auth-button i {
+      font-size: 0.875rem;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .hero p {
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 1.125rem;
+    }
+
+    .card {
+      background-color: var(--bg-white);
+      border-radius: 1rem;
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      margin-bottom: 2rem;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .uploader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 2rem;
+      border: 2px dashed #e5e7eb;
+      border-radius: 0.75rem;
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .uploader:hover {
+      border-color: var(--primary-light);
+      background-color: rgba(99, 102, 241, 0.05);
+    }
+
+    .uploader i {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .uploader h3 {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .uploader p {
+      color: var(--text-light);
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    #file-input {
+      display: none;
+    }
+
+    .button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .button:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .button:disabled {
+      background-color: #d1d5db;
+      cursor: not-allowed;
+    }
+
+    .user-welcome {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-light);
+      margin-bottom: 1rem;
+    }
+
+    .user-welcome i {
+      color: var(--primary);
+    }
+
+    .file-preview {
+      display: none;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .file-preview img {
+      max-width: 100%;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .feature {
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    .feature i {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .feature h3 {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .feature p {
+      color: var(--text-light);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 4rem;
+      color: var(--text-light);
+      font-size: 0.875rem;
+    }
+
+    /* Loading overlay styles */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      color: white;
+      display: none;
+    }
+
+    .spinner {
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 5px solid var(--primary);
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    .loading-text {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Disclaimer styles */
+    .disclaimer {
+      background-color: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      border-radius: 0.5rem;
+      color: #856404;
+    }
+
+    .disclaimer h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .disclaimer p {
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
+
+      .uploader {
+        padding: 2rem 1rem;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Consent modal styles */
+    .consent-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .consent-container {
+      background-color: var(--bg-white);
+      max-width: 600px;
+      width: 90%;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: var(--shadow-lg);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .consent-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      gap: 0.75rem;
+    }
+
+    .consent-header i {
+      color: #ffc107;
+      font-size: 1.75rem;
+    }
+
+    .consent-header h2 {
+      font-weight: 700;
+      color: var(--text-dark);
+      margin: 0;
+    }
+
+    .consent-text {
+      margin-bottom: 1.5rem;
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    .consent-checkbox {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+      gap: 0.75rem;
+    }
+
+    .consent-checkbox input {
+      margin-top: 5px;
+    }
+
+    .consent-checkbox label {
+      color: var(--text-dark);
+      font-size: 0.95rem;
+    }
+
+    .consent-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .consent-button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .consent-button:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .consent-button:disabled {
+      background-color: #d1d5db;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+      .consent-container {
+        width: 95%;
+        padding: 1.5rem;
+      }
+    }
+
+    /* GitHub card styles */
+    .github-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      text-align: center;
+      margin-bottom: 3rem;
+      background-color: #24292e;
+    }
+
+    .github-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .github-icon {
+      font-size: 3rem;
+      color: var(--text-light);
+    }
+
+    .github-text h3 {
+      color: #fff;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .github-text p {
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .github-button {
+      background-color: #fff;
+      color: #24292e;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .github-button:hover {
+      background-color: #24292e;
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .github-card {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ GA_ID }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+
+  gtag('config', '{{ GA_ID }}');
+</script>
+
+<body>
+  <!-- Consent Modal -->
+  {% if stopAnonymousService == false %}
+  <div class="consent-modal" id="consent-modal">
+    <div class="consent-container">
+      <div class="consent-header">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h2>Legal Agreement</h2>
+      </div>
+      <div class="consent-text">
+        <p>Before using our watermark removal service, please read and agree to the following terms:</p>
+        <ol style="margin-top: 10px; padding-left: 20px;">
+          <li>I will only use this tool on images that I have the legal right to modify.</li>
+          <li>I understand that removing watermarks from copyrighted material without permission may violate copyright
+            laws.</li>
+          <li>I will not use this tool to infringe on intellectual property rights of others.</li>
+          <li>I take full responsibility and assume all liability for how I use this tool and the processed images.</li>
+          <li>I acknowledge that this service is provided for educational and legitimate personal use only.</li>
+        </ol>
+      </div>
+      <div class="consent-checkbox">
+        <input type="checkbox" id="consent-checkbox">
+        <label for="consent-checkbox">I have read and agree to the terms above. I confirm that I will use this service
+          legally and responsibly.</label>
+      </div>
+      <div class="consent-actions">
+        <button id="consent-button" class="consent-button" disabled>I Agree & Continue</button>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Removing watermark, please wait...</div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <i class="fas fa-eraser"></i>
+        <span>Remove Watermark From Image</span>
+      </div>
+    </div>
+
+    <div class="hero">
+      <h1>AI Powered Watermark Remover</h1>
+      {% if stopAnonymousService == false %}
+      <p>Our AI-powered tool helps you remove watermarks from your images in seconds, restoring them to their original
+        beauty.</p>
+      {% endif %}
+    </div>
+
+    <div class="card uploader" id="auth-enforcement-card">
+      <h3>🔒 Authentication Required</h3>
+      <p>We are implementing authentication to ensure responsible usage of this web application.</p>
+      <p>Access will soon require login credentials.</p>
+      <p>The transition will happen in <b><span style="color: #6366f1;" id="countdown">10</span> seconds...</b></p>
+    </div>
+
+    <!-- Disclaimer section -->
+    <div class="disclaimer">
+      <h3><i class="fas fa-exclamation-triangle"></i> Disclaimer</h3>
+      <p>This is an experimental project created for educational and research purposes only. We do not encourage or
+        support the removal of watermarks from copyrighted content. Please respect intellectual property rights and only
+        use this tool with images you have proper rights to modify or for legitimate personal use cases such as removing
+        distractions from your own photos. Using this tool is your own responsibility, and you assume all liability for
+        how you use it.</p>
+    </div>
+
+    {% if stopAnonymousService %}
+    <div class="card github-card">
+      <div class="github-content">
+        <i class="fab fa-github github-icon"></i>
+        <div class="github-text">
+          <h3>Open Source Project</h3>
+          <p>This tool is an open source project. You can check out the code, contribute, or star the repository on
+            GitHub.</p>
+        </div>
+      </div>
+      <a href="https://github.com/Sumit189/removewatermarkfromimage?tab=readme-ov-file#yes-this-was-always-a-prompt-%EF%B8%8F"
+        target="_blank" rel="noopener noreferrer" class="github-button">
+        <i class="fab fa-github"></i>
+        View on GitHub
+      </a>
+    </div>
+    {% else %}
+    <div class="card">
+      <form method="post" action="/process" enctype="multipart/form-data" id="upload-form">
+        <label for="file-input" class="uploader" id="drop-area">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <h3>Upload an image</h3>
+          <p>Click or drag & drop your image here</p>
+          <span class="button" style="width: auto;">Select Image</span>
+        </label>
+        <input type="file" name="image" id="file-input" accept="image/*" required>
+
+        <div class="file-preview" id="preview-container">
+          <h3>Selected Image</h3>
+          <img id="image-preview" src="#" alt="Preview">
+        </div>
+
+        <button type="submit" class="button" id="submit-button" disabled>
+          <i class="fas fa-magic"></i>
+          Remove Watermark
+        </button>
+      </form>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <i class="fas fa-bolt"></i>
+        <h3>Fast Processing</h3>
+        <p>Remove watermarks in seconds with our advanced AI technology.</p>
+      </div>
+      <div class="feature">
+        <i class="fas fa-shield-alt"></i>
+        <h3>Privacy Protected</h3>
+        <p>Your images are processed securely and never shared with third parties. Image are deleted after 10
+          minutes.</p>
+      </div>
+      <div class="feature">
+        <i class="fas fa-magic"></i>
+        <h3>High Quality Results</h3>
+        <p>Get clean, professional-looking images with our smart removal algorithm.</p>
+      </div>
+    </div>
+
+    <div class="card github-card">
+      <div class="github-content">
+        <i class="fab fa-github github-icon"></i>
+        <div class="github-text">
+          <h3>Open Source Project</h3>
+          <p>This tool is an open source project. You can check out the code, contribute, or star the repository on
+            GitHub.</p>
+        </div>
+      </div>
+      <a href="https://github.com/Sumit189/removewatermarkfromimage?tab=readme-ov-file#yes-this-was-always-a-prompt-%EF%B8%8F"
+        target="_blank" rel="noopener noreferrer" class="github-button">
+        <i class="fab fa-github"></i>
+        View on GitHub
+      </a>
+    </div>
+    {% endif %}
+  </div>
+
+  <script>
+
+    function updateCountdown() {
+      const endDate = new Date("{{ anonymousUseEndDate }}").getTime();
+      const now = new Date();
+      const timeDiff = endDate - now;
+
+      if (timeDiff <= 0) {
+        document.getElementById("auth-enforcement-card").innerHTML =
+          "<h2>🔒 Authentication Now Required</h2><p>Access to this web app is now restricted.</p>";
+        clearInterval(timer);
+        if (!stopAnonymousService) {
+          window.location.reload();
+        }
+      }
+
+      // Convert milliseconds into days, hours, minutes, seconds
+      const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+      document.getElementById("countdown").textContent =
+        `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    // Update every second
+    const timer = setInterval(updateCountdown, 1000);
+    updateCountdown();
+    // Consent modal functionality
+    const consentModal = document.getElementById('consent-modal');
+    const consentCheckbox = document.getElementById('consent-checkbox');
+    const consentButton = document.getElementById('consent-button');
+    const submitButton = document.getElementById('submit-button');
+    const uploadForm = document.getElementById('upload-form');
+
+    // Hide consent modal initially
+    consentModal.style.display = 'none';
+
+    // Generate a unique session ID for consent tracking
+    const sessionId = generateSessionId();
+
+    // Function to generate a unique session ID
+    function generateSessionId() {
+      return 'consent_' + Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15) +
+        '_' + new Date().getTime();
+    }
+
+    // Log consent with Google Analytics
+    function logConsent() {
+      if (typeof gtag === 'function') {
+        gtag('event', 'consent_given', {
+          'event_category': 'Legal',
+          'event_label': 'Watermark Removal Consent',
+          'session_id': sessionId,
+          'timestamp': new Date().toISOString()
+        });
+        console.log('Consent logged with session ID:', sessionId);
+      }
+    }
+
+    // Enable button when checkbox is checked
+    consentCheckbox.addEventListener('change', function () {
+      consentButton.disabled = !this.checked;
+    });
+
+    // Handle consent button click
+    consentButton.addEventListener('click', function () {
+      consentModal.style.display = 'none';
+
+      // Log the consent with Google Analytics
+      logConsent();
+
+      // Submit the form after consent is given
+      if (uploadForm) {
+        uploadForm.submit();
+      }
+    });
+
+    // Show consent modal when submit button is clicked
+    if (uploadForm) {
+      uploadForm.addEventListener('submit', function (e) {
+        // Prevent the form from submitting
+        e.preventDefault();
+
+        // Show consent modal
+        consentModal.style.display = 'flex';
+
+        // Reset checkbox state
+        consentCheckbox.checked = false;
+        consentButton.disabled = true;
+      });
+    }
+
+    const fileInput = document.getElementById('file-input');
+    const previewContainer = document.getElementById('preview-container');
+    const imagePreview = document.getElementById('image-preview');
+    const dropArea = document.getElementById('drop-area');
+    const loadingOverlay = document.getElementById('loading-overlay');
+
+    // Store original image dimensions for consistent output size
+    let originalImageWidth = 0;
+    let originalImageHeight = 0;
+
+    // Separate handler for showing loading overlay after consent is given
+    function showLoadingAndAddDimensions() {
+      // Only show loading if there's a file selected
+      if (fileInput.files && fileInput.files[0]) {
+        loadingOverlay.style.display = 'flex';
+
+        // Add dimensions as hidden fields to the form
+        if (originalImageWidth > 0 && originalImageHeight > 0) {
+          // Remove existing hidden fields if they exist
+          const existingWidthField = document.getElementById('original-width');
+          const existingHeightField = document.getElementById('original-height');
+          const existingSessionField = document.getElementById('consent-session-id');
+
+          if (existingWidthField) existingWidthField.remove();
+          if (existingHeightField) existingHeightField.remove();
+          if (existingSessionField) existingSessionField.remove();
+
+          // Create and append hidden fields
+          const widthField = document.createElement('input');
+          widthField.type = 'hidden';
+          widthField.name = 'original_width';
+          widthField.id = 'original-width';
+          widthField.value = originalImageWidth;
+
+          const heightField = document.createElement('input');
+          heightField.type = 'hidden';
+          heightField.name = 'original_height';
+          heightField.id = 'original-height';
+          heightField.value = originalImageHeight;
+
+          // Add consent session ID to the form for server-side logging
+          const sessionField = document.createElement('input');
+          sessionField.type = 'hidden';
+          sessionField.name = 'consent_session_id';
+          sessionField.id = 'consent-session-id';
+          sessionField.value = sessionId;
+
+          uploadForm.appendChild(widthField);
+          uploadForm.appendChild(heightField);
+          uploadForm.appendChild(sessionField);
+        }
+      }
+    }
+
+    // Update the consent button click handler to also show loading overlay
+    consentButton.addEventListener('click', function () {
+      consentModal.style.display = 'none';
+
+      // Log the consent with Google Analytics
+      logConsent();
+
+      showLoadingAndAddDimensions();
+      // Submit the form after consent is given
+      if (uploadForm) {
+        uploadForm.submit();
+      }
+    });
+
+    if (fileInput) {
+      fileInput.addEventListener('change', function () {
+        if (this.files && this.files[0]) {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            imagePreview.src = e.target.result;
+            previewContainer.style.display = 'block';
+            submitButton.disabled = false;
+
+            // Get original image dimensions
+            const img = new Image();
+            img.onload = function () {
+              originalImageWidth = img.width;
+              originalImageHeight = img.height;
+              console.log(`Original image dimensions: ${originalImageWidth}x${originalImageHeight}`);
+            }
+            img.src = e.target.result;
+          }
+
+          reader.readAsDataURL(this.files[0]);
+        }
+      });
+
+      // Drag and drop functionality
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+      });
+
+      function highlight() {
+        dropArea.style.borderColor = 'var(--primary)';
+        dropArea.style.backgroundColor = 'rgba(99, 102, 241, 0.1)';
+      }
+
+      function unhighlight() {
+        dropArea.style.borderColor = '#e5e7eb';
+        dropArea.style.backgroundColor = '';
+      }
+
+      dropArea.addEventListener('drop', handleDrop, false);
+
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+
+        if (files && files[0]) {
+          fileInput.files = files;
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            imagePreview.src = e.target.result;
+            previewContainer.style.display = 'block';
+            submitButton.disabled = false;
+
+            // Get original image dimensions
+            const img = new Image();
+            img.onload = function () {
+              originalImageWidth = img.width;
+              originalImageHeight = img.height;
+              console.log(`Original image dimensions: ${originalImageWidth}x${originalImageHeight}`);
+            }
+            img.src = e.target.result;
+          }
+
+          reader.readAsDataURL(files[0]);
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

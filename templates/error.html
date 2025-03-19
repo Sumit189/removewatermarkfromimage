@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error - Watermark Remover</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --error: #ef4444;
+      --error-light: #fecaca;
+      --bg-light: #f9fafb;
+      --bg-white: #ffffff;
+      --text-dark: #1f2937;
+      --text-light: #6b7280;
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--text-dark);
+    }
+
+    .logo i {
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+
+    .error-card {
+      background-color: var(--bg-white);
+      border-radius: 1rem;
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .error-icon {
+      font-size: 4rem;
+      color: var(--error);
+      margin-bottom: 1.5rem;
+    }
+
+    .error-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .error-message {
+      color: var(--text-light);
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background-color: var(--error-light);
+      border-radius: 0.5rem;
+      display: inline-block;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .button:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 4rem;
+      color: var(--text-light);
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ GA_ID }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '{{ GA_ID }}');
+</script>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="/" class="logo">
+        <i class="fas fa-eraser"></i>
+        <span>Remove Watermark From Image</span>
+      </a>
+    </div>
+
+    <div class="error-card">
+      <div class="error-icon">
+        <i class="fas fa-exclamation-circle"></i>
+      </div>
+      <h2 class="error-title">Oops! Something went wrong</h2>
+      <p class="error-message">{{ error }}</p>
+      <a href="/" class="button">
+        <i class="fas fa-home"></i>
+        Return to Home
+      </a>
+    </div>
+  </div>
+</body>
+</html>
